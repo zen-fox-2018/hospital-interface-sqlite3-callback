@@ -7,8 +7,7 @@ function setupTableEmployees() {
                         name text,
                         position varchar(50),
                         username varchar(30),
-                        password varchar(30),
-                        loginStatus INTEGER
+                        password varchar(30)                        
                     )
                 `
     db.run(query, function (err) {
@@ -19,7 +18,7 @@ function setupTableEmployees() {
 }
 
 function addColumn() {
-    let query = `ALTER TABLE employees ADD COLUMN LoginStatus TEXT`
+    let query = `ALTER TABLE employees ADD COLUMN LoginStatus INTEGER`
     db.run(query, function(err){
         if(err){
             console.log(err)
@@ -42,5 +41,10 @@ function setupTablePatients() {
     })
 }
 
-// setupTableEmployees()
-setupTablePatients()
+function runSetup(){
+    db.serialize(function(){
+        setupTableEmployees()
+        addColumn()
+        setupTablePatients()
+    })
+}
