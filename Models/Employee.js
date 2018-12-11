@@ -3,11 +3,11 @@ const bcrypt = require(`bcryptjs`)
 
 class Employee {
     constructor(input) {
-        this.id = input.id
-        this.username = input.username
-        this.password = input.password
-        this.role = input.role
-        this.isLogin = input.isLogin || false
+        this.id = input ? input.id : null
+        this.username = input ? input.username : null
+        this.password = input ? input.password : null
+        this.role = input ? input.role : null
+        this.isLogin = input ? input.isLogin : null
     }
 
     create(username, password, role, cb) {
@@ -52,14 +52,7 @@ class Employee {
                     isLogin: row.isLogin
                 })
             } else {
-                self = new Employee({
-                    id: null,
-                    username: null,
-                    password: null,
-                    role: null,
-                    isLogin: null
-                })
-
+                self = new Employee()
             }
             err ?
                 cb(err, null) :
