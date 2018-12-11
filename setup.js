@@ -9,10 +9,10 @@ db.serialize(() => {
       name TEXT,
       username TEXT,
       password TEXT,
-      position TEXT,
-      isLogin INTEGER
+      position TEXT
     );
   `;
+
   db.run(qCreateTableEmployees, (err) => {
     if (err) {
       throw err;
@@ -20,6 +20,13 @@ db.serialize(() => {
     console.log(`Successfully create table employees`);
   });
 
+  db.run(`ALTER TABLE 'employees' ADD COLUMN 	'isLogin'	INTEGER`, (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(`Successfully add Column isLogin`);
+    }
+  })
   const qCreateTablePatients = `
     CREATE TABLE IF NOT EXISTS patients (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
