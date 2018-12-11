@@ -6,7 +6,7 @@ class Employee {
         this.username = input.username
         this.password = input.password
         this.role = input.role
-        this.isLogin = input.isLogin
+        this.isLogin = input.isLogin || false
     }
 
     create(username, password, role, cb) {

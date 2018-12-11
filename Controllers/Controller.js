@@ -9,7 +9,6 @@ class Controller {
             username: username,
             password: password,
             role: role,
-            isLogin: false
         })
         
         Employee.readOne(`username`, username, function (err, data) {
