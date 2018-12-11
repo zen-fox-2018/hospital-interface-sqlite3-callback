@@ -21,7 +21,11 @@ class Employee {
         cb(err)
       }
       else {
-        cb(null, rows)
+        let employees = []
+        for (let i = 0; i < rows.length; i++) {
+          employees.push(new Employee(rows[i]))
+        }
+        cb(null, employees)
       }
     })
   }
