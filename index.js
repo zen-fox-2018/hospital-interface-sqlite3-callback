@@ -8,6 +8,7 @@ switch (command) {
         break;
     case "login" :
         Controller.login(args[1], args[2])
+        break;
     case "delete" :
         Controller.delete(args[1])
         break;
@@ -15,10 +16,10 @@ switch (command) {
         Controller.findAll()
         break;
     case 'update' :
-        Controller.update(args[1], args[2], args[3], args[4], args[5])
+        Controller.update(args[1], args[2])
         break;
     case "addPatient":
-        Controller.addPatients(args[1], args.slice(2));
+        Controller.addPatients(args[1], args[2]);
         break;
     default:
 }

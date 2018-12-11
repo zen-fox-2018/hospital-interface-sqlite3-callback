@@ -8,10 +8,6 @@ class Patient {
       this.diagnosis = diagnosis
     }
 
-    static findOne() {
-        
-    }
-
     static findAll() {
     let selectAll = `SELECT * FROM Employees`
         db.all(selectAll, function(err, data) {
@@ -28,7 +24,8 @@ class Patient {
         })
     }
 
-    static create(input) {
+    static createPatient(input) {
+        console.log(input)
         let insertNewEmployee = `INSERT INTO Patients(name, diagnosis)
                                  VALUES ("${input.name}", "${input.diagnosis}");`
         db.run(insertNewEmployee, function(err) {

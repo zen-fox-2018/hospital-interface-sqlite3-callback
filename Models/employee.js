@@ -2,7 +2,8 @@
 const db = require("../db");
 
 class Employees {
-    constructor(name, position, username, password) {
+    constructor(id, name, position, username, password) {
+        this.id = id
         this.name = name;
         this.position = position;
         this.username = username;
@@ -15,11 +16,16 @@ class Employees {
                          WHERE ${field} = "${value}"`
         db.get(selectOne, function(err, row) {
             if(err) {
-                callback(err)
+                callback(err, null);
             } else {
-                let newRow = new Employees(row.name, row.position, row.username, row.password, row.isLogin);
 
-                callback(null, newRow);
+                if(row === undefined) {
+                    callback(null);
+                } else {
+                    let newRow = new Employees(row.id, row.name, row.position, row.username, row.password, row.isLogin);
+
+                    callback(null, newRow);
+                }
             }
         })
     }
@@ -28,14 +34,14 @@ class Employees {
         let selectAll = `SELECT * FROM Employees`
         db.all(selectAll, function(err, data) {
             if(err){
-                callback(err, null)
+                callback(err, null);
             } else {
                 let result = []
                 for(let i = 0; i < data.length; i++) {
-                    let newData = new Employees(data[i].name, data[i].position, data[i].username, data[i].password, data[i].isLogin);
+                    let newData = new Employees(data[i].id, data[i].name, data[i].position, data[i].username, data[i].password, data[i].isLogin);
                     result.push(newData)
                 }
-                callback(null, result)
+                callback(null, result);
             }
         })
     }
@@ -52,14 +58,11 @@ class Employees {
         })
     }
 
-    static update(input, callback) {
+    static update(column, value, id, callback) {
         let query = `UPDATE Employees
-                     SET name = ${input.name},
-                         position = ${input.position},
-                         username = ${input.username},
-                         password = ${input.password}
+                     SET ${column} = ${value}
                      WHERE 
-                        id = ${input.id};`
+                        id = ${id}`
         db.run(query, function(err) {
             if(err) {
                 callback(err)

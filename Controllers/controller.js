@@ -1,3 +1,4 @@
+
 const Employees = require("../Models/employee");
 const Patient = require("../Models/patient");
 const View = require("../Views/view");
@@ -6,21 +7,11 @@ class Controller {
 
     static register(name, position, username, password) {
         let newData = new Employees(name, position, username, password);
-        Employees.findOne("username", username, function(err, findData) {
+        Employees.create(newData, function(err, data) {
             if(err) {
                 View.showError(err)
             } else {
-                if(findData) {
-                    View.showError("Someone has already taken this username!")
-                } else {
-                    Employees.create(newData, function(err, data) {
-                        if(err) {
-                            View.showError(err)
-                        } else {
-                            View.showRegistered(data)
-                        }
-                    })
-                }
+                View.showRegistered(data)
             }
         })
     }
@@ -33,17 +24,21 @@ class Controller {
                 if(loggedIn) {
                     View.showError("Someone has already logged in!")
                 } else {
-                    Employees.findOne("isLogin", 0, function(err, nonLogin) {
+                    Employees.findOne("username", username, function(err, users) {
                         if(err) {
                             View.showError(err)
                         } else {
-                            Employees.findOne("username", username, function(err, users) {
-                                if(err) {
-                                    View.showError(err)
-                                } else {
-                                    
-                                }
-                            })
+                            if(users.password !== password) {
+                                View.showError("Wrong password!")
+                            } else {
+                                Employees.update("isLogin", 1, users.id, function(err, data) {
+                                    if(err) {
+                                        View.showError(err)
+                                    } else {
+                                        View.showLogin("You have successfully logged in!")
+                                    }
+                                })
+                            }
                         }
                     })
                 }
@@ -61,17 +56,9 @@ class Controller {
         })
     }
 
-    static update(id, value1, value2, value3, value4) {
+    static update(column, value, id) {
 
-        let updateObj = {
-            id : id,
-            name: value1,
-            position: value2,
-            username: value3,
-            password: value4
-        }
-
-        Employees.update(updateObj, function(err, data) {
+        Employees.update(column, value, id, function(err, data) {
             if(err) {
                 View.showUpdated(err)
             } else {
@@ -81,8 +68,6 @@ class Controller {
     }
 
     static addPatients(name, diagnosis) {
-        let addNewPatient = new Patient(name, diagnosis);
-
         Employees.findOne("isLogin", 1, function(err, loggedIn) {
             if(err) {
                 View.showError(err)
@@ -94,7 +79,8 @@ class Controller {
                         if(!doctor) {
                             View.showError("You do not have the access!")
                         } else {
-                            Patient.create(addNewPatient, function(err, data) {
+                            let addNewPatient = new Patient(name, diagnosis);
+                            Patient.createPatient(addNewPatient, function(err, data) {
                                 if(err) {
                                     View.showError(err)
                                 } else {

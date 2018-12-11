@@ -1,11 +1,11 @@
 
 class View {
     static showRegistered(data) {
-        console.log(`Save a data success! Total Employee: ${data.length}`)
+        console.log(`Save a data success! Total Employee: ${data}`)
     }
 
     static showDeleted(data) {
-        console.log(data)
+        console.log("You have successfully deleted this person!")
     }
 
     static showLogin(data) {
