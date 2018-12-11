@@ -23,7 +23,7 @@ class View {
     node main.js login <username> <password>
     node main.js addPatient <patient_name> <diagnosis>
     node main.js logout <username>
-    node main.js delete <patientname>
+    node main.js delete <patientid>
     ===================================================
     `)
   }

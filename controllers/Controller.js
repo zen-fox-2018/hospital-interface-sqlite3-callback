@@ -51,55 +51,44 @@ class Controller {
     let obj = {
       field1: 'login',
       field2: 'password',
-      val1: 1,
-      val2: input[1]
+      val1: 1 
     }
 
-    Employee.findAll((errcek, rows) => {
-      if(errcek) {
-        View.error(`getting all data`, err)
+    Employee.findOne('login', 1, (err, dataLogin) => {
+      if(err) {
+        View.error(err)
       } else {
-        let cekLogin = false
-        for (let i = 0; i < rows.length; i++) {
-          if(rows[i].login == 1) {
-            cekLogin = true
-          } 
-        }
-
-        if(cekLogin) {
-          View.error(`Somebody login already!`)
+        if(dataLogin) {
+          View.error(`Somebody login already`)
         } else {
           Employee.findOne('username', input[0] , (err, data1) => {
             if(err) {
               View.error(`finding username`, err)
             } else {
-              Employee.findOne('password', input[1], (err, data) => {
-                if(err) {
-                  View.error(`no matching password`, err)
-                } else {
-                  console.log(data)
-                  Employee.update(obj, (err) => {
-                    if(err) {
-                      View.error(`updating data`, err)
-                    } else {
-                      View.display(`user logged in successfully :` , data.username)
-                    }
-                  })
-                }
-              })
+              if(data1.password !== input[1]) {
+                View.error(`Password wrong!`)
+              } else {
+                data.update(obj, (err) => {
+                  if(err) {
+                    View.error(`updating data`, err)
+                  } else {
+                    View.display(`user logged in successfully :` , data.username)
+                  }
+                })
+              }
             }
           })
         }
       }
     })
+
   }
 
   static logout(input) {
     let obj = {
       field1: 'login',
       field2: 'username',
-      val1: 0,
-      val2: input[0]
+      val1: 0 
     }
 
     Employee.findOne('username', input[0] , (err, data) => {
@@ -109,7 +98,7 @@ class Controller {
         if(data.login == 0) {
           View.error(`\nUser didn't login`)
         } else {
-          Employee.update(obj, (err) => {
+          data.update(obj, (err) => {
             if(err) {
               View.error(`updating data`, err)
             } else {
@@ -124,6 +113,7 @@ class Controller {
   static addPatient(input) {
     let diag = input.slice(1)
     const newPat = new Patient(null ,input[0], diag.join(',') )
+
     Employee.findOne('login', 1, (errFO, dataLogin) => {
       if(errFO) {
         View.error(`Login first!`)
@@ -156,7 +146,8 @@ class Controller {
   }
   
   static delete(input) {
-    let name = input[0]
+    let id = input[0]
+
      Employee.findOne('login', 1, (errFO, dataLogin) => {
       if(errFO) {
         View.error(`Login first!`)
@@ -164,7 +155,7 @@ class Controller {
         if(dataLogin.position !== 'dokter') {
           View.error(`Only doctor have the authority to delete patient!`)
         } else {
-          Patient.findOne('name', name, (err, dataPat) => {
+          Patient.findOne('id', id, (err, dataPat) => {
             if(err) {
               View.error(err)
             } else {
@@ -172,7 +163,7 @@ class Controller {
                 if(err) {
                   View.error(err)
                 } else {
-                  View.display(`Success delete ${name} data`)
+                  View.display(`delete data : ${dataPat.id} `)
                 }
               })
             }

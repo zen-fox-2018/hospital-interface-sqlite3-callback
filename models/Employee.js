@@ -59,25 +59,17 @@ class Employee {
     })
   }
 
-  static update(obj, cb){
+  update(obj, cb){
     let value1;
-    let value2;
-
+ 
     if(isNaN(obj.val1)) {
       value1 = `"${obj.val1}"`
     } else {
       value1 = obj.val1
     }
+    let query = `UPDATE employees SET ${obj.field1} = ${value1} WHERE ${obj.field2} = ?`
 
-    if (isNaN(obj.val2)) {
-      value2 = `"${obj.val2}"` 
-    } else {
-      value2 = obj.val2
-    }
-
-    let query = `UPDATE employees SET ${obj.field1} = ${value1} WHERE ${obj.field2} = ${value2}`
-
-    db.run(query, (err) => {
+    db.run(query,[this[obj.field2]] , (err) => {
       if(err) {
         cb(err)
       } else {
