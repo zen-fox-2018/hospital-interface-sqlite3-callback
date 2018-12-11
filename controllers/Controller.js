@@ -93,18 +93,22 @@ class Controller {
 
     Employee.findOne('username', input[0] , (err, data) => {
       if(err) {
-        View.error(`finding username`, err)
+        View.error(err)
       } else {
-        if(data.login == 0) {
-          View.error(`\nUser didn't login`)
+        if (data) {
+          if(data.login == 0) {
+            View.error(`\nUser didn't login`)
+          } else {
+            data.update(obj, (err) => {
+              if(err) {
+                View.error(`updating data`, err)
+              } else {
+                View.display(`\nuser logged out successfully :` , data.username)
+              }
+            })
+          }
         } else {
-          data.update(obj, (err) => {
-            if(err) {
-              View.error(`updating data`, err)
-            } else {
-              View.display(`\nuser logged out successfully :` , data.username)
-            }
-          })
+          View.error(`Username not found`)
         }
       }
     })
