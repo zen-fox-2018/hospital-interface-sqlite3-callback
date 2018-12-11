@@ -4,7 +4,7 @@ class Employee {
     constructor(obj) {
       this.id = obj['id']
       this.name = obj['name']
-      this.position = obj['posisition']
+      this.posisition = obj['posisition']
       this.username = obj['username']
       this.password = obj['password']
       this.isLogin = obj['isLogin']

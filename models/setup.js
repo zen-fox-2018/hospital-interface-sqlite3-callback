@@ -20,4 +20,10 @@ db.serialize(()=> {
         if(err) console.log(err);
         else console.log('Success Create Table patients');
     })
+
+    // let qCreateDiagnosis = `CREATE TABLE IF NOT EXISTS diagnosis (
+    //     id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    //     namePenyakit TEXT,
+    //     patient_id INTEGER,
+    //     )`
 })
