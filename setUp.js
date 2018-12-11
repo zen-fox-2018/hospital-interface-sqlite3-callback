@@ -8,8 +8,7 @@ function empTable() {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username VARCHAR,
     position VARCHAR,
-    password VARCHAR , 
-    login INTEGER DEFAULT 0
+    password VARCHAR
     )
   `
   let db = openDb();
@@ -19,8 +18,10 @@ function empTable() {
         View.error(`setting up employees table : \n`, err)
       } else {
         View.display(`setting up employees table!`)
+        alterLogin() // harus dalam else?
       }
     })
+   //alterLogin()
   })
   db.close((err) => {
     if(err) {
@@ -58,5 +59,21 @@ function patTable() {
   })
 }
 
+function alterLogin(){
+  let query = `
+    ALTER TABLE employees 
+    ADD COLUMN login INTEGER DEFAULT 0
+  `
+  let db = openDb()
+  db.run(query, (err) => {
+    if(err) {
+      View.error(err)
+    } else {
+      View.display(`alter table add login`)
+    }
+  })
+}
+
 empTable()
 patTable()
+// alterLogin()
