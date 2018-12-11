@@ -49,8 +49,8 @@ class Controller {
 
   static login(input) {
     let obj = {
-      field1: 'login',
-      field2: 'password',
+      set: 'login',
+      where: 'id',
       val1: 1 
     }
 
@@ -58,7 +58,7 @@ class Controller {
       if(err) {
         View.error(err)
       } else {
-        if(dataLogin) {
+        if(dataLogin !== null) {
           View.error(`Somebody login already`)
         } else {
           Employee.findOne('username', input[0] , (err, data1) => {
@@ -68,11 +68,11 @@ class Controller {
               if(data1.password !== input[1]) {
                 View.error(`Password wrong!`)
               } else {
-                data.update(obj, (err) => {
+                data1.update(obj, (err) => {
                   if(err) {
                     View.error(`updating data`, err)
                   } else {
-                    View.display(`user logged in successfully :` , data.username)
+                    View.display(`user logged in successfully :` , data1.username)
                   }
                 })
               }
@@ -86,8 +86,8 @@ class Controller {
 
   static logout(input) {
     let obj = {
-      field1: 'login',
-      field2: 'username',
+      set: 'login',
+      where: 'username',
       val1: 0 
     }
 
@@ -146,7 +146,6 @@ class Controller {
   }
   
   static delete(input) {
-    let id = input[0]
 
      Employee.findOne('login', 1, (errFO, dataLogin) => {
       if(errFO) {
@@ -155,7 +154,7 @@ class Controller {
         if(dataLogin.position !== 'dokter') {
           View.error(`Only doctor have the authority to delete patient!`)
         } else {
-          Patient.findOne('id', id, (err, dataPat) => {
+          Patient.findOne('id', input[0], (err, dataPat) => {
             if(err) {
               View.error(err)
             } else {

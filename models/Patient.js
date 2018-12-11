@@ -35,15 +35,8 @@ class Patient {
   }
 
   static findOne (field, value, cb) {
-    let val;
-    if(isNaN(value)) {
-      val = `"${value}"`
-    } else {
-      val = value
-    }
-
-    let query = `SELECT * FROM patients WHERE ${field} = ${val}`
-    db.get(query, (err, row) =>{
+    let query = `SELECT * FROM patients WHERE ${field} = ?`
+    db.get(query, [value], (err, row) =>{
       if(err){
         cb(err)
       } else {
@@ -51,31 +44,16 @@ class Patient {
           let newEmp = new Patient(row.id, row.name, row.diagnosis)
           cb(null, newEmp)
         } else {
-           cb(`\ndata not found`)
+           cb(null , null)
         }
       }
     })
   }
 
   static update(obj, cb){
-    let value1;
-    let value2;
+    let query = `UPDATE patients SET ${obj.set} = ? WHERE ${obj.where} = ?`
 
-    if(isNaN(obj.val1)) {
-      value1 = `"${obj.val1}"`
-    } else {
-      value1 = obj.val1
-    }
-
-    if (isNaN(obj.val2)) {
-      value2 = `"${obj.val2}"`
-    } else {
-      value2 = obj.val2
-    }
-
-    let query = `UPDATE patients SET ${obj.field1} = ${value1} WHERE ${obj.field2} = ${value2}`
-
-    db.run(query, (err) => {
+    db.run(query,[obj.val1, this[obj.where]], (err) => {
       if(err) {
         cb(err)
       } else {
@@ -85,8 +63,8 @@ class Patient {
   }
 
   delete(cb) {
-    let query = `DELETE FROM patients WHERE id = ${this.id}`
-    db.run(query, (err) => {
+    let query = `DELETE FROM patients WHERE id = ?`
+    db.run(query,[this.id], (err) => {
       cb(err)
     })
   }

@@ -37,39 +37,26 @@ class Employee {
   }
 
   static findOne (field, value, cb) {
-    let val;
-    if(isNaN(value)) {
-      val = `"${value}"`
-    } else {
-      val = value
-    }
 
-    let query = `SELECT * FROM employees WHERE ${field} = ${val}`
-    db.get(query, (err, row) =>{
+    let query = `SELECT * FROM employees WHERE ${field} = ?`
+    db.get(query, [value] ,(err, row) =>{
       if(err){
-        cb(err)
+        cb(err, null)
       } else {
         if(row) {
           let newEmp = new Employee(row.id, row.username, row.position, row.password, row.login)
           cb(null, newEmp)
         } else {
-          cb(`\ndata not found`)
+          cb(null, null)
         }
       }
     })
   }
 
   update(obj, cb){
-    let value1;
- 
-    if(isNaN(obj.val1)) {
-      value1 = `"${obj.val1}"`
-    } else {
-      value1 = obj.val1
-    }
-    let query = `UPDATE employees SET ${obj.field1} = ${value1} WHERE ${obj.field2} = ?`
+    let query = `UPDATE employees SET ${obj.set} = ? WHERE ${obj.where} = ?`
 
-    db.run(query,[this[obj.field2]] , (err) => {
+    db.run(query,[obj.val1, this[obj.where]] , (err) => {
       if(err) {
         cb(err)
       } else {
@@ -79,8 +66,8 @@ class Employee {
   }
 
   delete(cb) {
-    let query = `DELETE FROM employees WHERE id = ${this.id}`
-    db.run(query, (err) => {
+    let query = `DELETE FROM employees WHERE id = ?`
+    db.run(query,[this.id] , (err) => {
       cb(err)
     })
   }
