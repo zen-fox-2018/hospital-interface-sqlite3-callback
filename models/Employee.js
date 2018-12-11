@@ -23,6 +23,30 @@ class Employee {
         })
     }
 
+    static CountEmployee (callback) {
+        db.all(`SELECT COUNT(*) AS total FROM employees;`, (err,rows)=> {
+            if(err) callback(err, null)
+            else callback(null, rows)
+        })
+    }
+
+    static findOne(collums, value, callback) {
+        let statements = ''
+        if(value > -1 ) {
+            statements = `${collums} = ${value}`
+        } else {
+            statements = `${collums} = "${value}"`
+        }
+     
+        db.all(`SELECT * FROM employees
+                WHERE ${statements}`, (err,data)=>{
+                    if(err) callback(err, null)
+                    else {
+                        callback(null, data)
+                    }
+                })
+    }
+
     static findById(id, callback){
         db.all(`SELECT * FROM employees
                 WHERE id = ${id};`, (err,rows)=> {

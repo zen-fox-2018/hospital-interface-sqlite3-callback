@@ -30,32 +30,29 @@ class Controller {
         })
     }
 
-    static loginEmployee(name, password) {
-        Employee.findByAll((err,data)=> {
+    static loginEmployee(name, password){
+        Employee.findOne('isLogin', 1 , (err, data)=> {
             if(err) View.showErr(err)
-            else{
-                let tempCheckIsLogin = false
-                let tempIndex = 0
-                for(let i = 0; i < data.length; i++) {
-                    if(data[i].isLogin == 0){
-                        if(data[i].username == name && data[i].password == password) {
-                            tempIndex = i + 1
-                        }
-                    } else {
-                        tempCheckIsLogin = true
-                    }
-                }
-                if (tempCheckIsLogin) {
+            else {
+                if(data.length) {
                     View.alreadyLogin()
-                }
-                else if(!tempIndex) {
-                    View.showFailLogin()
                 } else {
-                    Employee.updateIsLogin(tempIndex, (errUpdate)=> {
-                        if(errUpdate) {
-                            View.showErr(errUpdate)
-                        } else {
-                            View.successLogin(name)
+                    Employee.findOne('username', name, (errFindUsername, dataEmployee)=> {
+                        if(errFindUsername) View.showErr(errFindUsername)
+                        else {
+                            if(dataEmployee.length == 0) {
+                                View.showFailLogin()
+                            } else if(dataEmployee[0].password == password) {
+                                Employee.updateIsLogin(dataEmployee[0].id, (errUpdate)=> {
+                                    if(errUpdate) {
+                                        View.showErr(errUpdate)
+                                    } else {
+                                        View.successLogin(name)
+                                    }
+                                })
+                            }   else{
+                                View.showFailLogin()
+                            }
                         }
                     })
                 }
@@ -63,24 +60,18 @@ class Controller {
         })
     }
 
-    static logoutEmployee(name, password) {
-        Employee.findByAll((err,data)=> {
+    static logoutEmployee() {
+        Employee.findOne('isLogin', 1, (err, data)=> {
             if(err) View.showErr(err)
-            else{
-                let tempIndex = 0
-                for(let i = 0; i < data.length; i++) {
-                    if(data[i].username == name && data[i].password == password) {
-                        tempIndex = i + 1
-                    }        
-                }
-                if(!tempIndex) {
-                    View.showFailLogin()
+            else {
+                if(!data.length) {
+                    View.needLogin()
                 } else {
-                    Employee.updateIsLogout(tempIndex, (errUpdate)=> {
+                    Employee.updateIsLogout(data[0].id, (errUpdate)=> {
                         if(errUpdate) {
                             View.showErr(errUpdate)
                         } else {
-                            View.successLogout(name)
+                            View.successLogout(data[0].username)
                         }
                     })
                 }
@@ -89,32 +80,26 @@ class Controller {
     }
 
     static addPatient(name, diagnosis) {
-        Employee.findByAll((err,data)=> {
+        Employee.findOne('isLogin', 1, (err, data)=> {
             if(err) View.showErr(err)
             else {
-                let tempIndex = 0
-                for(let i = 0; i < data.length; i++){
-                    if(data[i].isLogin == 1){
-                        tempIndex = i + 1
-                    }
-                }
-                if(!tempIndex) {
+                if(!data.length) {
                     View.needLogin()
                 } else {
-                    if(data[tempIndex - 1].posisition == 'dokter') {
-                        Patient.insertPatient(name, diagnosis, (errAdd)=> {
-                            if(errAdd) View.showErr(errAdd)
+                    if(data[0].posisition != 'dokter') {
+                        View.showNoAccess()
+                    } else {
+                        Patient.insertPatient(name, diagnosis , (errAddData)=> {
+                            if(errAddData) View.showErr(errAddData)
                             else {
-                                Patient.findByAll((errPatient,dataPatient)=> {
-                                    if(errPatient) View.showErr(errPatient)
-                                    else {
-                                        View.successAddPatient(dataPatient.length)
+                                Patient.CountPatient((errCount, dataCount)=> {
+                                    if(errCount) View.showErr(errCount)
+                                    else {      
+                                        View.successAddPatient(dataCount[0].total)
                                     }
                                 })
                             }
                         })
-                    } else {
-                        View.showNoAccess()
                     }
                 }
             }

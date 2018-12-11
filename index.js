@@ -21,6 +21,6 @@ switch (command) {
         Controller.addPatient(argv[1], diagnosa)
         break;
     case 'logout':
-        Controller.logoutEmployee(argv[1], argv[2])
+        Controller.logoutEmployee()
         break;
 }

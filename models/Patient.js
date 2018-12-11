@@ -31,6 +31,13 @@ class Patient {
                     }
                 })
     }
+    
+    static CountPatient (callback) {
+        db.all(`SELECT COUNT(*) AS total FROM patients;`, (err,rows)=> {
+            if(err) callback(err, null)
+            else callback(null, rows)
+        })
+    }
 
     static insertPatient(name, diagnosis, callback) {
         db.run(`INSERT INTO patients VALUES(null, "${name}", "${diagnosis}")` , (err)=> {
