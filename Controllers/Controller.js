@@ -8,7 +8,8 @@ class Controller {
         let employee = new Employee({
             username: username,
             password: password,
-            role: role
+            role: role,
+            isLogin: false
         })
         
         Employee.readOne(`username`, username, function (err, data) {
