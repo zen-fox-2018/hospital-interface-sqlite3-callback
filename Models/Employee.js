@@ -8,7 +8,7 @@ class Employee {
         this.role = input.role
     }
 
-    static create(username, password, role, cb) {
+    create(username, password, role, cb) {
         bcrypt.hash(password, 10, function (err, hash) {
             let insertQuery = `INSERT INTO Employees (
                 username, password, role, isLogin
@@ -35,7 +35,6 @@ class Employee {
                 cb(err, null) :
                 cb(null, rows)
         })
-
     }
 
     static readOne(column, status, cb) {
@@ -47,7 +46,7 @@ class Employee {
         })
     }
 
-    static update(whereCase, whereStatus, column, colStatus, cb) {
+    update(whereCase, whereStatus, column, colStatus, cb) {
         let updateQuery = `UPDATE Employees SET ${column} = "${colStatus}" WHERE ${whereCase} = "${whereStatus}"`
         db.run(updateQuery, function (err) {
             err ?

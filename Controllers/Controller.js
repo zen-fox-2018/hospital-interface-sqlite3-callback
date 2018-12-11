@@ -5,13 +5,19 @@ const bcrypt = require(`bcryptjs`)
 
 class Controller {
     static register(username, password, role) {
+        let employee = new Employee({
+            username: username,
+            password: password,
+            role: role
+        })
+        
         Employee.readOne(`username`, username, function (err, data) {
             err ?
                 View.errorRegister(`error register`) :
                 data != undefined ?
                     data.username == username &&
                     View.errorLogin(`username sudah ada`) :
-                    Employee.create(username, password, role, function (err, data) {
+                    employee.create(username, password, role, function (err, data) {
                         err ?
                             View.errorRegister(`error register`) :
                             Employee.readAll(function (err, data) {
@@ -61,7 +67,7 @@ class Controller {
         Employee.readOne(`username`, username, function (err, data) {
             err ?
                 View.errorLogout(`something went wrong`) :
-                Employee.update(`username`, username, `isLogin`, false, function (err) {
+                employee.update(`username`, username, `isLogin`, false, function (err) {
                     err ? 
                         View.errorLogout(`error logout`) :
                         View.successLogout(`${username} success logout`)
