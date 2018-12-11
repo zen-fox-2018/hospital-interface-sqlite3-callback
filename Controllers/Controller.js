@@ -5,19 +5,20 @@ const bcrypt = require(`bcryptjs`)
 
 class Controller {
     static register(username, password, role) {
-        let employee = new Employee({
-            username: username,
-            password: password,
-            role: role,
-        })
-        
         Employee.readOne(`username`, username, function (err, data) {
             err ?
                 View.errorRegister(`error register`) :
                 data != undefined ?
-                    data.username == username &&
-                    View.errorLogin(`username sudah ada`) :
-                    employee.create(username, password, role, function (err, data) {
+                    data.username == username ?
+                        View.errorLogin(`username sudah ada`) :
+                        data.create(username, password, role, function (err, data) {
+                            err ?
+                                View.errorRegister(`error register`) :
+                                Employee.readAll(function (err, data) {
+                                    View.successRegister(`success register success, Total Employee: ${data.length}`)
+                                })
+                        }) :
+                    data.create(username, password, role, function (err, data) {
                         err ?
                             View.errorRegister(`error register`) :
                             Employee.readAll(function (err, data) {
@@ -36,7 +37,7 @@ class Controller {
                     Employee.readOne(`username`, username, function (err, data) {
                         bcrypt.compare(password, data.password, function (err, res) {
                             res == true ?
-                                Employee.update(`username`, username, `isLogin`, "true", function (err, data) {
+                                data.update(`username`, username, `isLogin`, "true", function (err, data) {
                                     err ?
                                         View.errorLogin(err) :
                                         View.successLogin(`success login ${username}`)
@@ -65,10 +66,11 @@ class Controller {
 
     static logout(username) {
         Employee.readOne(`username`, username, function (err, data) {
+            console.log(data)
             err ?
                 View.errorLogout(`something went wrong`) :
-                employee.update(`username`, username, `isLogin`, false, function (err) {
-                    err ? 
+                data.update(`username`, username, `isLogin`, false, function (err) {
+                    err ?
                         View.errorLogout(`error logout`) :
                         View.successLogout(`${username} success logout`)
                 })

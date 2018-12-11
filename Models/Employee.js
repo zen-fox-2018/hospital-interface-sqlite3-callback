@@ -3,6 +3,7 @@ const bcrypt = require(`bcryptjs`)
 
 class Employee {
     constructor(input) {
+        this.id = input.id
         this.username = input.username
         this.password = input.password
         this.role = input.role
@@ -41,9 +42,28 @@ class Employee {
     static readOne(column, status, cb) {
         let readOnequery = `SELECT * FROM Employees WHERE ${column} = "${status}"`
         db.get(readOnequery, function (err, row) {
+            let self;
+            if (row != undefined) {
+                self = new Employee({
+                    id: row.id,
+                    username: row.username,
+                    password: row.password,
+                    role: row.role,
+                    isLogin: row.isLogin
+                })
+            } else {
+                self = new Employee({
+                    id: null,
+                    username: null,
+                    password: null,
+                    role: null,
+                    isLogin: null
+                })
+
+            }
             err ?
                 cb(err, null) :
-                cb(null, row)
+                cb(null, self)
         })
     }
 
