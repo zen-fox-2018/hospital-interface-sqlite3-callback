@@ -17,7 +17,8 @@ switch (command) {
         Controller.loginEmployee(argv[1], argv[2])
         break;
     case 'addPatient':
-        Controller.addPatient(argv[1], argv[2])
+        let diagnosa = argv.slice(2).join(',')
+        Controller.addPatient(argv[1], diagnosa)
         break;
     case 'logout':
         Controller.logoutEmployee(argv[1], argv[2])
