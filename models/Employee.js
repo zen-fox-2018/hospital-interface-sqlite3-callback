@@ -56,7 +56,7 @@ class Employee {
         let newEmployee = new Employee(input.name, input.username, input.password, input.position)
         let query = `INSERT INTO Employees (name, username, password, position, isLogin)
         VALUES('${newEmployee.name}', '${newEmployee.username}', '${newEmployee.password}', '${newEmployee.position}', '${newEmployee.isLogin}')`
-        // newEmployee.save()
+        
         db.run(query, function(err) {
             if(err) {
                 cb(err)

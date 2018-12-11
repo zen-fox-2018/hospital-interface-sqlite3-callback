@@ -10,8 +10,7 @@ db.serialize(function() {
         name VARCHAR,
         username VARCHAR,
         password VARCHAR,
-        position VARCHAR,
-        isLogin VARCHAR(10)
+        position VARCHAR
     )`
     db.run(employeeTable, function(err) {
         if(err) {
@@ -34,6 +33,17 @@ db.serialize(function() {
             console.log(err)
         } else {
             console.log('Success create Patients Table!!')
+        }
+    })
+
+    let qAddColumnEmployee = 
+    `ALTER TABLE Employees ADD COLUMN
+    isLogin TEXT`
+    db.run(qAddColumnEmployee, function(err) {
+        if(err) {
+            console.log(err)
+        } else {
+            console.log('Success add column isLogin to Employee Table')
         }
     })
 })

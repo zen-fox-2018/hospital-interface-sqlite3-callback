@@ -28,7 +28,6 @@ class Controller {
                     View.alert('Somebody is still log in!!')
                 } else {
                     Employee.findOne({field: 'username', value: input.username}, function(err, dataEmp) {
-                        // console.log(dataEmp)
                         if(err) {
                             View.displayError('Err : ', err)
                         } else {
@@ -61,7 +60,6 @@ class Controller {
                     View.alert('You are not Log in')
                 } else {
                     Employee.findOne({field: 'username', value: input.username}, function(err, dataEmp) {
-                        console.log(dataEmp)
                         if(err) {
                             View.displayError(err)
                         } else {
@@ -88,7 +86,7 @@ class Controller {
             if(err) {
                 View.displayError('Err : ', err)
             } else {
-                if(!row) {
+                if(row) {
                     View.alert('Please Log in as a doctor to add patients')
                 } else {
                     Employee.findOne({field: 'position', value: 'docter'}, function(err, row) {
