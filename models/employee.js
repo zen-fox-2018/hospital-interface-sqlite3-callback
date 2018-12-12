@@ -36,134 +36,57 @@ class Employee {
       INSERT INTO
         employees (name, username, password, position, isLogin)
       VALUES
-        ("${data[0]}", "${data[1]}", "${data[2]}", "${data[3]}", 0);
+        (?, ?, ?, ?, 0);
     `;
 
-    Employee.findAnEmployee(['username', data[1]], (errFind, employees) => {
-      if (errFind) {
-        callback(errFind)
+    db.run(query, data, (errRun) => {
+      if (errRun) {
+        callback(errRun);
       } else {
-        if (employees.length) {
-          callback(`username ${data[1]} already exist!!`)
+        callback(null)
+      }
+    })
+  }
+
+  static findOne(search, callback) {
+
+    const query = `
+      SELECT
+        *
+      FROM
+        employees
+      WHERE ${search[0]} = ?`
+
+    db.get(query, search.slice(1), (err, employee) => {
+      if (err) {
+        callback(err, null);
+      } else {
+        if (employee) {
+          callback(null, new Employee(employee));
         } else {
-          db.run(query, (errRun) => {
-            if (errRun) {
-              callback(errRun);
-            } else {
-              callback(null)
-            }
-          })
+          callback(null, null);
         }
       }
     })
   }
 
-  static findEmployees(search, callback) {
-    let whereValues = '';
-    for (let i = 0; i < search.length - 1; i+=2) {
-      whereValues += `${search[i]} like "%${search[i+1]}%"`;
-      if (i < search.length - 2) {
-        whereValues += ' AND ';
-      }
-    }
-
-    const query = `
-      SELECT
-        *
-      FROM
-        employees
-      WHERE ${whereValues}`
-
-    db.all(query, (err, employees) => {
-      if (err) {
-        callback(err, null);
-      } else {
-        let dataEmployees = [];
-        employees.forEach( e => {
-          dataEmployees.push(new Employee(e));
-        })
-        callback(null, dataEmployees);
-      }
-    })
-  }
-
-  static findAnEmployee(search, callback) {
-    let whereValues = '';
-    for (let i = 0; i < search.length - 1; i+=2) {
-      whereValues += `${search[i]} = "${search[i+1]}"`;
-      if (i < search.length - 2) {
-        whereValues += ' AND ';
-      }
-    }
-
-    const query = `
-      SELECT
-        *
-      FROM
-        employees
-      WHERE ${whereValues}`
-
-    db.all(query, (err, employees) => {
-      if (err) {
-        callback(err, null);
-      } else {
-        let dataEmployees = [];
-        employees.forEach( e => {
-          dataEmployees.push(new Employee(e));
-        })
-        callback(null, dataEmployees);
-      }
-    })
-  }
-
-  static updateEmployee(data, callback) {
-    let idEmployee = data[0];
-    data = data.slice(1);
-    let setValues = '';
-    for (let i = 0; i < data.length - 1; i+=2) {
-      setValues += `${data[i]} = "${data[i+1]}"`;
-      if (i < data.length - 2) {
-        setValues += ', ';
-      }
-    }
-
+  updateEmployee(setValue, callback) {
     const query = `
       UPDATE
         employees
       SET
-      ${setValues}
-      WHERE id = ${idEmployee}`
-
-    Employee.findAnEmployee(['id', idEmployee], (errFind, employees) => {
-      if (errFind) {
-        callback(errFind)
-      } else {
-        if (employees.length) {
-          db.run(query, (err) => {
-            if (err) {
-              callback(err);
-            } else {
-              callback (null);
-            }
-          })
-        } else {
-          callback(`ID Not Found.`)
-        }
-      }
-    })
-  }
-
-  static addPatient (callback) {
-    let data = ['isLogin', 1];
-    Employee.findAnEmployee(data, (err, employee) => {
+        ${setValue[0]} = ?
+      WHERE
+        id = ${this.id};
+    `
+    db.run(query, setValue[1], (err) => {
       if (err) {
-        callback(err, null);
+        callback(this.id)
       } else {
-        callback(null, employee);
+        callback();
       }
     })
   }
-
 }
 
 module.exports = Employee;

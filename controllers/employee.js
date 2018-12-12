@@ -7,7 +7,11 @@ class ControllerEmployee {
   static createEmployee(data) {
     Employee.createEmployee(data, (errCreate) => {
       if (errCreate) {
-        EmployeeView.showErr(errCreate);
+        if (errCreate.errno === 19) {
+          EmployeeView.showErr(`Username already exists!`);
+        } else {
+          EmployeeView.showErr(errCreate);
+        }
       } else {
         Employee.listAllEmployees((errList, employees) => {
           if (errList) {
@@ -37,7 +41,7 @@ class ControllerEmployee {
   }
 
   static findEmployees(data) {
-    Employee.findEmployees(data, (err, employees) => {
+    Employee.findOne(data, (err, employees) => {
       if (err) {
         EmployeeView.showErr(err);
       } else {
@@ -47,56 +51,82 @@ class ControllerEmployee {
   }
 
   static loginEmployees(activity, data) {
-    if (activity == 'login') {
-      var isLogin = 1;
-      var msg = 'Welcome';
-    } else {
-      var isLogin = 0;
-      var msg = 'Bye';
-    }
-
-    let loginValue = ['username', data[0], 'password', data[1]];
-    Employee.findAnEmployee(loginValue, (errFind, employees) => {
+    Employee.findOne(['username', data[0]], (errFind, employee) => {
       if (errFind) {
-        EmployeeView.showErr(errFind);
+        EmployeeView.showErr(errFind)
       } else {
-        if (employees.length) {
-          let editValue = [employees[0].id, 'isLogin', isLogin];
-          Employee.updateEmployee(editValue, (errEdit) => {
-            if (errEdit) {
-              EmployeeView.showErr(errEdit);
-            } else {
-              EmployeeView.showSuccess(`${msg} ${employees[0].username}.`)
-            }
-          })
+        if (employee) {
+          if (employee.password === data[1]) {
+            Employee.findOne(['isLogin', 1], (errLogin, userLogin) => {
+              if (errLogin) {
+                EmployeeView.showErr(errLogin);
+              } else {
+                if (userLogin) {
+                  if (activity === 'login') {
+                    EmployeeView.showErr(`There are another user logged in`);
+                  } else {
+                    if (employee.name === userLogin.name) {
+                      employee.updateEmployee(['isLogin', 0], (errUpdate) => {
+                        if (errUpdate) {
+                          EmployeeView.showErr(errUpdate);
+                        } else {
+                          EmployeeView.showSuccess(`Good Bye ${employee.name}.`)
+                        }
+                      })
+                    } else {
+                      EmployeeView.showErr(`There are another user logged in`);
+                    }
+                  }
+                } else {
+                  if (activity === 'login') {
+                    employee.updateEmployee(['isLogin', 1], (errUpdate) => {
+                      if (errUpdate) {
+                        EmployeeView.showErr(errUpdate);
+                      } else {
+                        EmployeeView.showSuccess(`Welcome ${employee.name}.`)
+                      }
+                    })
+                  } else {
+                    EmployeeView.showErr(`You are not logged in`);
+                  }
+                }
+              }
+            })
+          } else {
+            EmployeeView.showErr(`Wrong password!!`);
+          }
         } else {
-          EmployeeView.showErr(`Wrong username or password!!!`)
+          EmployeeView.showErr(`Wrong Username!!!`);
         }
       }
     })
   }
 
   static addPatient(data) {
-    Employee.addPatient((errLogin, employee) => {
-      if (errLogin) {
-        EmployeeView.showErr(errLogin);
+    Employee.findOne(['isLogin', 1], (errFind, employee) => {
+      if (errFind) {
+        EmployeeView.showErr(errFind);
       } else {
-        if (employee.length) {
-          Patient.createPatient(data, (errCreate) => {
-            if (errCreate) {
-              EmployeeView.showErr(errCreate);
-            } else {
-              Patient.listAllPatients((errList, patients) => {
-                if (errList) {
-                  EmployeeView.showErr(errList);
-                } else {
-                  EmployeeView.showSuccess(`Successfully insert patient's data. Total patients ${patients.length}.`)
-                }
-              })
-            }
-          })
+        if (employee) {
+          if (employee.position === 'doctor') {
+            Patient.createPatient(data, (errDoctor) => {
+              if (errDoctor) {
+                EmployeeView.showErr(errDoctor)
+              } else {
+                Patient.listAllPatients((errList, patients) => {
+                  if (errList) {
+                    EmployeeView.showErr(errList);
+                  } else {
+                    EmployeeView.showSuccess(`Successfully insert patient. Total data : ${patients.length}.`)
+                  }
+                })
+              }
+            })
+          } else {
+            EmployeeView.showErr(`Do not have permission to insert patient.`);
+          }
         } else {
-          EmployeeView.showErr(`Tidak memiliki akses untuk add patient!!`);
+          EmployeeView.showErr(`Must login as doctor`)
         }
       }
     })

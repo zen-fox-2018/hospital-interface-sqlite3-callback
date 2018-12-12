@@ -33,71 +33,13 @@ class Patient {
       INSERT INTO
         patients (name, diagnoses)
       VALUES
-        ("${data[0]}", "${diagnoses}");
+        (?, ?);
     `;
-    db.run(query, (errRun) => {
+    db.run(query, [data[0],diagnoses], (errRun) => {
       if (errRun) {
         callback(errRun);
       } else {
         callback(null);
-      }
-    })
-  }
-
-  static findPatients(search, callback) {
-    let whereValues = '';
-    for (let i = 0; i < search.length - 1; i+=2) {
-      whereValues += `${search[i]} like "%${search[i+1]}%"`;
-      if (i < search.length - 2) {
-        whereValues += ' AND ';
-      }
-    }
-
-    const query = `
-      SELECT
-        *
-      FROM
-        patients
-      WHERE ${whereValues}`
-
-    db.all(query, (err, patients) => {
-      if (err) {
-        callback(err, null);
-      } else {
-        let dataPatients = [];
-        patients.forEach( e => {
-          dataPatients.push(new Patient(e));
-        })
-        callback(null, dataPatients);
-      }
-    })
-  }
-
-  static findAnPatient(search, callback) {
-    let whereValues = '';
-    for (let i = 0; i < search.length - 1; i+=2) {
-      whereValues += `${search[i]} = "${search[i+1]}"`;
-      if (i < search.length - 2) {
-        whereValues += ' AND ';
-      }
-    }
-
-    const query = `
-      SELECT
-        *
-      FROM
-        patients
-      WHERE ${whereValues}`
-
-    db.all(query, (err, patients) => {
-      if (err) {
-        callback(err, null);
-      } else {
-        let dataPatients = [];
-        patients.forEach( e => {
-          dataPatients.push(new Patient(e));
-        })
-        callback(null, dataPatients);
       }
     })
   }

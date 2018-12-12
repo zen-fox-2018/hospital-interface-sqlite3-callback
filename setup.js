@@ -7,7 +7,7 @@ db.serialize(() => {
     CREATE TABLE IF NOT EXISTS employees (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT,
-      username TEXT,
+      username TEXT UNIQUE,
       password TEXT,
       position TEXT
     );
