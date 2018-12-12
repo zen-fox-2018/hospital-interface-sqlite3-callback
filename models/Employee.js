@@ -36,7 +36,10 @@ class Employee {
     }
 
     create(cb) {
-        Employee.findOne('username', [this.username], (err, data) => {
+        let find = {
+            username: this.username
+        }
+        Employee.findOne(find, (err, data) => {
             if (err) {
                 cb(err)
             } else {
