@@ -20,13 +20,13 @@ class Employee {
         })
     }
 
-    static findWhere(condition, cb){
+    static findWhere(Column, condition, cb){
         let query = 
-        `SELECT * 
+        `SELECT *
         FROM Employees
-        WHERE ${condition}`
+        WHERE '${Column}' = ${condition}`
 
-        db.all(select, function(err, data){
+        db.all(query, function(err, data){
             if(err){
                 cb(err, null)
             }   else{
