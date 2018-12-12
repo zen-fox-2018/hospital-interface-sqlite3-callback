@@ -29,8 +29,8 @@ class View {
         console.log(`tidak memiliki akses untuk add patient`);
         
     }
-    static showSuccess(msg, dataLength) {
-        console.log(`${msg} Total Employee : ${dataLength}`);
+    static showSuccess( dataLength) {
+        console.log(`User berhasil ditambahkan. Total Employee : ${dataLength}`);
     }
 
     static successAddPatient(dataLength) {

@@ -21,7 +21,7 @@ class Patient {
     }
 
     static findById(id, callback) { 
-        db.all(`SELECT * FROM patients
+        db.get(`SELECT * FROM patients
                 WHERE id = ${id};`, (err, rows)=> {
                     if(err) callback(err, null)
                     else {
@@ -33,7 +33,7 @@ class Patient {
     }
     
     static CountPatient (callback) {
-        db.all(`SELECT COUNT(*) AS total FROM patients;`, (err,rows)=> {
+        db.get(`SELECT COUNT(*) AS total FROM patients;`, (err,rows)=> {
             if(err) callback(err, null)
             else callback(null, rows)
         })

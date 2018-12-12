@@ -17,15 +17,13 @@ class Controller {
     }
 
     static registerData(name, username, password, role) {
-        Employee.insertDataEmployee(name, username, password, role,(err, msg) =>{
+        Employee.insertDataEmployee(name, username, password, role,(err) =>{
             if(err) View.showErr(err)
             else {
-                Employee.findByAll((errFind, data)=> {
+                Employee.CountEmployee((errFind, dataCount)=> {
                     if(errFind) View.showErr(errFind)
-                    else{
-                        View.showSuccess(msg, data.length)
-                    }
-                }) 
+                    else View.showSuccess(dataCount.total)
+                })
             }
         })
     }
@@ -34,16 +32,18 @@ class Controller {
         Employee.findOne('isLogin', 1 , (err, data)=> {
             if(err) View.showErr(err)
             else {
-                if(data.length) {
+                if(data) {
                     View.alreadyLogin()
                 } else {
                     Employee.findOne('username', name, (errFindUsername, dataEmployee)=> {
+                        // console.log(dataEmployee);
+                        
                         if(errFindUsername) View.showErr(errFindUsername)
                         else {
-                            if(dataEmployee.length == 0) {
+                            if(!dataEmployee) {
                                 View.showFailLogin()
-                            } else if(dataEmployee[0].password == password) {
-                                Employee.updateIsLogin(dataEmployee[0].id, (errUpdate)=> {
+                            } else if(dataEmployee.password == password) {
+                                Employee.updateData(dataEmployee.id, 1, 'isLogin', (errUpdate)=> {
                                     if(errUpdate) {
                                         View.showErr(errUpdate)
                                     } else {
@@ -64,14 +64,14 @@ class Controller {
         Employee.findOne('isLogin', 1, (err, data)=> {
             if(err) View.showErr(err)
             else {
-                if(!data.length) {
+                if(!data) {
                     View.needLogin()
                 } else {
-                    Employee.updateIsLogout(data[0].id, (errUpdate)=> {
+                    Employee.updateData(data.id, 0, 'isLogin', (errUpdate)=> {
                         if(errUpdate) {
                             View.showErr(errUpdate)
                         } else {
-                            View.successLogout(data[0].username)
+                            View.successLogout(data.username)
                         }
                     })
                 }
@@ -83,10 +83,10 @@ class Controller {
         Employee.findOne('isLogin', 1, (err, data)=> {
             if(err) View.showErr(err)
             else {
-                if(!data.length) {
+                if(!data) {
                     View.needLogin()
                 } else {
-                    if(data[0].posisition != 'dokter') {
+                    if(data.posisition != 'dokter') {
                         View.showNoAccess()
                     } else {
                         Patient.insertPatient(name, diagnosis , (errAddData)=> {
@@ -95,7 +95,7 @@ class Controller {
                                 Patient.CountPatient((errCount, dataCount)=> {
                                     if(errCount) View.showErr(errCount)
                                     else {      
-                                        View.successAddPatient(dataCount[0].total)
+                                        View.successAddPatient(dataCount.total)
                                     }
                                 })
                             }
