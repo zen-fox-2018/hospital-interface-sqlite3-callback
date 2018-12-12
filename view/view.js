@@ -29,6 +29,10 @@ class View {
         console.log(`user ${data} logged in successfully`)
     }
 
+    static canLogout(data) {
+        console.log(`user ${data} logged out successfully`)
+    }
+
     static wrongPassword() {
         console.log('username / password wrong')
     }

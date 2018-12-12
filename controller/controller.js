@@ -43,7 +43,7 @@ class Controller {
                             // console.log(errUsername,'err username')
                             View.showDataErr(errUsername)
                         } else {
-                            console.log(employeeUsername[0].id, 'ini id')
+                            // console.log(employeeUsername[0].id, 'ini id')
                             // console.log(password)
                             if (password == employeeUsername[0].password) {
                                 // employeeUsername[0].status = 1
@@ -62,6 +62,22 @@ class Controller {
                     })
 
                 }
+            }
+        })
+    }
+
+    static logout() {
+        Employee.findOne('status', 1, (errStatus,employeeStatus) => {
+            if (errStatus) {
+                View.showDataErr(errStatus)
+            } else {
+                Employee.update('status', 0, employeeStatus[0].id, (errUpdate) => {
+                    if (errUpdate) {
+                        View.showDataErr(errUpdate)
+                    } else {
+                        View.canLogout(employeeStatus[0].name)
+                    }
+                })
             }
         })
     }

@@ -13,6 +13,10 @@ switch (command) {
         Controller.login(argv[1], argv[2])
         break;
 
+    case 'logout':
+        Controller.logout(argv[1])
+        break;
+
     case 'data' :
         Controller.showData()
         break;
