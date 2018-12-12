@@ -9,48 +9,77 @@ class Employee {
         this.status = status
     }
 
-    static findAll(cb){
+    static findAll(cb) {
         let query = `SELECT * FROM Employees`
 
-        db.all(query,function(err,data){
+        db.all(query, function (err, data) {
             if (err) {
-                cb(err,null)
+                cb(err, null)
             } else {
-                cb(null,data)
+                cb(null, data)
             }
         })
     }
 
-    static createNew(name, username, password, role, status, cb){
+    static createNew(name, username, password, role, status, cb) {
 
-            let input = new Employee(name, username, password, role, status)
-            let query = 
+        let input = new Employee(name, username, password, role, status)
+        let query =
             `INSERT INTO Employees (name, username, password, role, status)
-            VALUES ("${input.name}", "${input.username}", "${input.password}", "${input.role}",${input.status})` 
-    
-            db.run(query,function(err){
-                if (err) {
-                    cb(err);
-                } 
-                else {
-                    cb(null)
-                }
-            })
-        
-    }
+            VALUES ("${input.name}", "${input.username}", "${input.password}", "${input.role}",${input.status})`
 
-
-    static findById(){
+        db.run(query, function (err) {
+            if (err) {
+                cb(err);
+            }
+            else {
+                cb(null)
+            }
+        })
 
     }
 
-    static update(){
+    static findOne(field, value, cb) {
+        // console.log(field,'ini field')
+        // console.log(value,'ini value')
+        let query =
+            `SELECT * FROM Employees
+             WHERE ${field} = "${value}"`
+
+        db.all(query, function (err, data) {
+            if (err) {
+                cb(err, null)
+            } else {
+                cb(null, data)
+            }
+        })
+    }
+
+
+    static findById() {
 
     }
 
-    static delete(){
+    static update(field, value, condition, cb) {
+
+        let query = 
+            `UPDATE Employees
+             SET ${field} = "${value}"
+             WHERE ${condition}`
+
+        db.run(query, function(err){
+            if (err) {
+                cb(err)
+            } else {
+                cb(null)
+                // console.log('berhasil update')
+            }
+        })
+
+    }
+
+    static delete() {
 
     }
 }
-
 module.exports = Employee
