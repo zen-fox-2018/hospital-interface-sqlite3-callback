@@ -43,12 +43,12 @@ class Controller {
                             // console.log(errUsername,'err username')
                             View.showDataErr(errUsername)
                         } else {
-                            // console.log(employeeUsername[0].password, 'cek pass')
+                            console.log(employeeUsername[0].id, 'ini id')
                             // console.log(password)
                             if (password == employeeUsername[0].password) {
                                 // employeeUsername[0].status = 1
                                 // update DB
-                                Employee.update('status', 1, `username = "${username}"`, function(errUpdate){
+                                Employee.update('status', 1, employeeUsername[0].id, function(errUpdate){
                                     if(errUpdate) {
                                         View.showDataErr(errUpdate)
                                     } else {

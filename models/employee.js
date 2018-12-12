@@ -60,12 +60,12 @@ class Employee {
 
     }
 
-    static update(field, value, condition, cb) {
+    static update(field, value, id, cb) {
 
         let query = 
             `UPDATE Employees
              SET ${field} = "${value}"
-             WHERE ${condition}`
+             WHERE id = ${id}`
 
         db.run(query, function(err){
             if (err) {
