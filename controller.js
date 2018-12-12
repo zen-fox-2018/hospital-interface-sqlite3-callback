@@ -63,13 +63,12 @@ class Controller {
         })
     }
 
-
     static addPatient(patientName, diagnosis) {
         Employee.findAll(function (err, allData) {
             if (err) {
                 View.error(err, "login failed")
             } else {
-                
+
                 Employee.findWhere(1, 'isLogin', function(err, loginData){
                     if(err){
                         View.error(er, 'find login status error')
@@ -100,6 +99,28 @@ class Controller {
                         }
                     }
                 })
+            }
+        })
+    }
+
+    static logout(){
+        Employee.findWhere(1, 'isLogin', function(err, logoutData){
+            if(err){
+                View.error(err, 'find logged in error')
+            }   else{
+
+                if(logoutData.length == 0){
+                    View.display('all users are logged out')
+
+                }   else{
+                    Employee.update('isLogin', 'false', logoutData[0].id, function(err){
+                        if(err){
+                            View.error(err, 'update logout status error')
+                        }   else{
+                            View.display(`${logoutData[0].name} logged out succesfully`)
+                        }
+                    })
+                }       
             }
         })
     }
